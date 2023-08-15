@@ -1,0 +1,69 @@
+import csv
+import datetime
+import PySimpleGUI as sg
+#ReadTheBibleInAYear.csv- https://www.christianity.com/bible/year/esv/b.htm
+
+myDict = dict()
+filename=("ReadTheBibleInAYear.csv")
+verses= list()
+verse_days = list()
+sg.theme('Topanga')      # Add some color to the window
+
+# Very basic window.  Return values using auto numbered keys
+
+layout = [
+    [sg.Text('Welcome to Bible In A Year')],
+    [sg.Text('Please enter your starting date (Numbers only)')],
+    [sg.Text('Year', size=(15, 1)), sg.InputText()],
+    [sg.Text('Month', size=(15, 1)), sg.InputText()],
+    [sg.Text('Day', size=(15, 1)), sg.InputText()],
+    [sg.Submit(), sg.Cancel()]
+]
+
+window = sg.Window('Bible In A Year', layout)
+event, values = window.read()
+window.close()
+
+year = int(values[0]) 
+month =int(values[1])
+day= int(values[2])
+start_date= datetime.date(year,month,day)
+k=365
+#delta = end_date - start_date
+with open(filename,'r') as data:
+    for line in csv.reader(data):
+        verses.append(line[1])
+for day in range(0,366):
+    date = (start_date+datetime.timedelta(days=day)).strftime("%B %d, %Y")
+    verse_days.append(date)
+for i in range(k):
+    myDict[verse_days[i]]=verses[i]
+
+layout = [  [sg.Text('Bible In A Year Plan:')],
+            [sg.Output(size=(150,30), key='-OUTPUT-')],
+            [sg.In(key='')],
+            [sg.Button('Go'), sg.Button('Clear'), sg.Button('Exit')]  ]
+
+window = sg.Window('Bible In A Year', layout)
+
+while True:             # Event Loop
+    event, values = window.read()
+    for x,y in myDict.items():
+        print(x,"             ", y)
+    if event in (sg.WIN_CLOSED, 'Exit'):
+        break
+    if event == 'Clear':
+        window['-OUTPUT-'].update('')
+window.close()
+
+
+    
+
+
+        
+
+
+    
+
+
+        
