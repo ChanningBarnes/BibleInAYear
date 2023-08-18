@@ -1,32 +1,61 @@
 import csv
 import datetime
 import PySimpleGUI as sg
-#ReadTheBibleInAYear.csv- https://www.christianity.com/bible/year/esv/b.htm
+#C:\Users\chann\Python stuff\ReadTheBibleInAYear.csv
 
 myDict = dict()
 filename=("ReadTheBibleInAYear.csv")
 verses= list()
 verse_days = list()
 sg.theme('Topanga')      # Add some color to the window
+months_dict= {'January':1,
+         'February':2,
+         'March':3,
+         'April' :4,
+         'May':5,
+         'June':6,
+         'July':7,
+         'August':8,
+         'September':9,
+         'October':10,
+         'November':11,
+         'December':12}
+months=['January','February','March','April','May','June','July','August','September','October','November','December']
+years= [z for z in range(2023,2100)]
+days = [i for i in range(1,32)]
 
 # Very basic window.  Return values using auto numbered keys
+# months_lst = sg.Combo(months, font=('Arial Bold', 14),  expand_x=True, enable_events=True,  readonly=False, key='-COMBO-')
+# days_lst = sg.Combo(days, font=('Arial Bold', 14),  expand_x=True, enable_events=True,  readonly=False, key='-COMBO1-')
 
+# layout = [
+#     [sg.Text('Welcome to Bible In A Year')],
+#     [sg.Text('Please enter your starting date (Numbers only)')],
+#     [sg.Text('Year', size=(15, 1)), sg.InputText()],
+#     [sg.Text('Month', size=(15, 1)), months_lst],
+#     [sg.Text('Day', size=(15, 1)), days_lst],
+#     [sg.Submit(), sg.Cancel()]
+# ]
+today = str(datetime.date.today().strftime('%Y-%B-%d'))
+today_list = today.split("-")
 layout = [
     [sg.Text('Welcome to Bible In A Year')],
-    [sg.Text('Please enter your starting date (Numbers only)')],
-    [sg.Text('Year', size=(15, 1)), sg.InputText()],
-    [sg.Text('Month', size=(15, 1)), sg.InputText()],
-    [sg.Text('Day', size=(15, 1)), sg.InputText()],
+    [sg.Text('Please enter your starting date')],
+    [sg.Text('Year', size=(15, 1))],
+    [sg.Combo(years, font=('Arial Bold', 12), default_value=today_list[0] , key='-COMBO-')],
+    [sg.Text('Month', size=(15, 1))],
+    [sg.Combo(months, font=('Arial Bold', 12), default_value=today_list[1], key='-COMBO1-')],
+    [sg.Text('Day', size=(15, 1))],
+    [sg.Combo(days, font=('Arial Bold', 12), default_value=today_list[2], key='-COMBO2-')],
     [sg.Submit(), sg.Cancel()]
 ]
-
 window = sg.Window('Bible In A Year', layout)
 event, values = window.read()
 window.close()
 
-year = int(values[0]) 
-month =int(values[1])
-day= int(values[2])
+year = int(values['-COMBO-']) 
+month =months_dict[values['-COMBO1-']]
+day= int(values['-COMBO2-'])
 start_date= datetime.date(year,month,day)
 k=365
 #delta = end_date - start_date
@@ -55,12 +84,6 @@ while True:             # Event Loop
     if event == 'Clear':
         window['-OUTPUT-'].update('')
 window.close()
-
-
-    
-
-
-        
 
 
     
