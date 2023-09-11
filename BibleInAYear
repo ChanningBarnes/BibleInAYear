@@ -1,10 +1,18 @@
 import csv
 import datetime
 import PySimpleGUI as sg
-#C:\Users\chann\Python stuff\ReadTheBibleInAYear.csv
 
+def isLeapYear(n):
+    if n % 4 == 0:
+        if n % 100 == 0:
+            if n% 400 == 0:
+                return True
+            return False
+        return True
+    else:
+        return False
 myDict = dict()
-filename=("ReadTheBibleInAYear.csv") # https://www.christianity.com/bible/year/esv/b.htm
+filename=("C:/Users/chann/Documents/Python stuff/ReadTheBibleInAYear.csv")
 verses= list()
 verse_days = list()
 sg.theme('Topanga')      # Add some color to the window
@@ -22,26 +30,49 @@ months_dict= {'January':1,
          'December':12}
 months=['January','February','March','April','May','June','July','August','September','October','November','December']
 years= [z for z in range(2023,2100)]
-days = [i for i in range(1,32)]
+days31 = [i for i in range(1,32)] #January, March, May, July, August, October, and December
+days28 = [i for i in range(1,29)] #February
+days29 = [i for i in range(1,30)]#February on a Leap Year
+days30 =[i for i in range(1,31)] #April, June, September, and November.
+months31= ['January','March','May','July','August','October','December']
+months30 = ['April','June','September','November']
 
-# Very basic window.  Return values using auto numbered keys
-# months_lst = sg.Combo(months, font=('Arial Bold', 14),  expand_x=True, enable_events=True,  readonly=False, key='-COMBO-')
-# days_lst = sg.Combo(days, font=('Arial Bold', 14),  expand_x=True, enable_events=True,  readonly=False, key='-COMBO1-')
+
 today = str(datetime.date.today().strftime('%Y-%B-%d'))
 today_list = today.split("-")
 layout = [
-    [sg.Text('Welcome to Bible In A Year')],
+    [sg.Text('Welcome to Bible In A Year') ],
     [sg.Text('Please enter your starting date')],
     [sg.Text('Year', size=(15, 1))],
-    [sg.Combo(years, font=('Arial Bold', 12), default_value=today_list[0] , key='-COMBO-')],
+    [sg.Combo(years, font=('Arial Bold', 12), default_value=today_list[0] , enable_events = True,key='-COMBO-')],
     [sg.Text('Month', size=(15, 1))],
-    [sg.Combo(months, font=('Arial Bold', 12), default_value=today_list[1], key='-COMBO1-')],
+    [sg.Combo(months, font=('Arial Bold', 12), default_value=today_list[1], enable_events = True, key='-COMBO1-')],
     [sg.Text('Day', size=(15, 1))],
-    [sg.Combo(days, font=('Arial Bold', 12), default_value=today_list[2], key='-COMBO2-')],
+    [sg.Combo(days30, font=('Arial Bold', 12), default_value=today_list[2], enable_events = True,key='-COMBO2-')],
     [sg.Submit(), sg.Cancel()]
 ]
 window = sg.Window('Bible In A Year', layout)
-event, values = window.read()
+
+
+
+
+while True:             # Event Loop
+    event, values = window.read()
+    if event in (sg.WIN_CLOSED, 'Submit'):
+        break
+    elif event == '-COMBO1-' or event == '-COMBO-': 
+        if values['-COMBO1-']=='February' and isLeapYear(int(values['-COMBO-'])): 
+            window['-COMBO2-'].update(value =1 ,values=days29)
+
+        elif values['-COMBO1-']=='February':
+            window['-COMBO2-'].update(value =1 ,values=days28)          
+        elif values['-COMBO1-'] in months31:
+            window['-COMBO2-'].update(value =1 ,values=days31)
+        else:
+            window['-COMBO2-'].update(value =1 ,values=days30)
+    elif event in 'Cancel':
+        window.close()
+
 window.close()
 
 year = int(values['-COMBO-']) 
@@ -61,8 +92,7 @@ for i in range(k):
 
 layout = [  [sg.Text('Bible In A Year Plan:')],
             [sg.Output(size=(150,30), key='-OUTPUT-')],
-            [sg.In(key='')],
-            [sg.Button('Go'), sg.Button('Clear'), sg.Button('Exit')]  ]
+            [sg.Button('Go')]  ]
 
 window = sg.Window('Bible In A Year', layout)
 
@@ -72,8 +102,6 @@ while True:             # Event Loop
         print(x,"             ", y)
     if event in (sg.WIN_CLOSED, 'Exit'):
         break
-    if event == 'Clear':
-        window['-OUTPUT-'].update('')
 window.close()
 
 
